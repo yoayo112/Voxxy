@@ -1,28 +1,47 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React , {useState} from 'react';
+import { 
+  Button, 
+  SafeAreaView, 
+  Text, 
+  View,
+  TouchableOpacity
+ } from 'react-native';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+// Import the stylesheet we just created.
+import styles from './styles';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+
+//Everything happens in here?
+const App = () => {
+
+  //expirementing with a button
+  
+  //so0 heres a hook
+  const [count, setCount] = useState(0);
+
+  //and the corresponding function
+  const handlePress = () => {
+    // We update the state by calling setCount with the new value.
+    setCount(count + 1);
+  };
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NewAppScreen templateFileName="App.tsx" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.contentBox}>
+        <Text style={styles.titleText}>Voxxy</Text>
+        <TouchableOpacity style={styles.button} onPress={handlePress}>
+          <Text style={styles.buttonText}>Pitch Match</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handlePress}>
+          <Text style={styles.buttonText}>Interval Training</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handlePress}>
+          <Text style={styles.buttonText}>Sequences</Text>
+        </TouchableOpacity>
+        <Text>{count}</Text>
+      </View>
+    </SafeAreaView>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+};
 
 export default App;
