@@ -1,3 +1,9 @@
+/**
+ * style css page for Voxxy app 
+ * by @author Sky Vercauteren 
+ * August 2025
+**/
+
 import { StyleSheet } from 'react-native';
 
 // We export the styles so they can be imported and used in other files.
