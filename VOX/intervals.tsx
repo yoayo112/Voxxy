@@ -28,7 +28,6 @@ const IntervalScreen: React.FC<IntervalScreenProps> = ({ onBack }) => {
 
   return (
     <SafeAreaView style={styles.intervalContainer}>
-      <View style={styles.contentBox}>
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
           <Text style={styles.backButtonText}>Go Back</Text>
         </TouchableOpacity>
@@ -38,7 +37,6 @@ const IntervalScreen: React.FC<IntervalScreenProps> = ({ onBack }) => {
           {count}
         </Text>
         <Button title='Count' onPress={handleCount}></Button>
-      </View>
     </SafeAreaView>
   );
 };

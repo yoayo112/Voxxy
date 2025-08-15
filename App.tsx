@@ -4,13 +4,15 @@
  * August 2025
 **/
 
-import React , {useState} from 'react';
+import React , {useState, useEffect} from 'react';
 import { 
   Button, 
   SafeAreaView, 
   Text, 
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform,
+  PermissionsAndroid,
  } from 'react-native';
 
 import styles from './VOX//styles';
@@ -21,7 +23,36 @@ import SequenceScreen from './VOX//sequences';
 //Everything happens in here?
 const App = () => {
 
-  //expirementing with a button
+    // Function to request microphone permissions
+  const requestPermissions = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          {
+            title: 'Microphone Permission',
+            message: 'This app needs access to your microphone to record audio.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Microphone permission granted');
+        } else {
+          console.log('Microphone permission denied');
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  };
+
+  // The useEffect hook runs the code inside it after the component renders.
+  // The empty dependency array [] ensures it only runs once on mount.
+  useEffect(() => {
+    requestPermissions();
+  }, []);
   
   //so heres a hook
     const [currentScreen, setCurrentScreen] = useState('main');
@@ -58,7 +89,7 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <View style={styles.contentBox}>
+      <View style={styles.mainContent}>
         <Text style={styles.titleText}>Voxxy</Text>
         
         {/* The three buttons handle changing screens*/}
@@ -71,7 +102,6 @@ const App = () => {
         <TouchableOpacity style={styles.button} onPress={handleSequencePress}>
           <Text style={styles.buttonText}>Sequences</Text>
         </TouchableOpacity>
-        
       </View>
     </SafeAreaView>
   );

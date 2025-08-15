@@ -8,8 +8,29 @@ import { StyleSheet } from 'react-native';
 
 // We export the styles so they can be imported and used in other files.
 const styles = StyleSheet.create({
+  pitchBox: {
+    width: 400,
+    height: 500,
+    marginTop: 10,
+    flexDirection:'column',
+    justifyContent: 'center',
+    backgroundColor : 'black',
+  },
+  pitchSquare: {
+    width: 10,
+    height: 10,
+    backgroundColor: 'white',
+    position: 'absolute',
+  },
+    controls: {
+    flexDirection: 'row',
+    marginTop: 20,
+  },
   pitchmatchContainer: {
     flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
     backgroundColor: '#16083dff',
   },
   intervalContainer: {
@@ -24,8 +45,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#2cf7baff',
   },
-  contentBox: {
-    flex: 1,
+  mainContent: {
+    flex:1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -40,7 +61,6 @@ const styles = StyleSheet.create({
     color: '#6B7280',
   },
   button: {
-    // This is the key change! We set the width to '80%'.
     width: '80%',
     backgroundColor: '#04756cff',
     paddingVertical: 12,
@@ -55,9 +75,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   backButton: {
-    marginTop: 20,
+    justifyContent:'flex-start',
+    marginTop: 45,
     padding: 10,
-    backgroundColor: '#53f396ff', // A red color for a back button
+    backgroundColor: '#53f396ff',
     borderRadius: 8,
   },
   backButtonText: {

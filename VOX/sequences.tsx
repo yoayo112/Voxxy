@@ -28,7 +28,7 @@ const SequenceScreen: React.FC<SequenceScreenProps> = ({ onBack }) => {
 
   return (
     <SafeAreaView style={styles.sequenceContainer}>
-      <View style={styles.contentBox}>
+      {/*<View style={styles.contentBox}>*/}
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
           <Text style={styles.backButtonText}>Go Back</Text>
         </TouchableOpacity>
@@ -38,7 +38,6 @@ const SequenceScreen: React.FC<SequenceScreenProps> = ({ onBack }) => {
           {count}
         </Text>
         <Button title='Count' onPress={handleCount}></Button>
-      </View>
     </SafeAreaView>
   );
 };
