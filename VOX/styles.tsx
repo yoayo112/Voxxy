@@ -4,25 +4,48 @@
  * August 2025
 **/
 
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+export const pitchBoxHeight = height - (height/3)
+export const pitchBoxWidth = width - 20;
+
 
 // We export the styles so they can be imported and used in other files.
 const styles = StyleSheet.create({
   pitchBox: {
-    width: 400,
-    height: 500,
+    width: pitchBoxWidth,
+    height: pitchBoxHeight,
+    marginHorizontal: 10,
+    borderColor: "#84d3ebff",
+    borderWidth: 1,
     marginTop: 10,
     flexDirection:'column',
     justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor : 'black',
   },
   pitchSquare: {
     width: 10,
     height: 10,
-    backgroundColor: 'white',
+    marginLeft: 0,
+    backgroundColor: '#fa54ecff',
     position: 'absolute',
   },
-    controls: {
+  pitchTail: {
+    width: 10,
+    height: 10,
+    marginLeft: 0,
+    backgroundColor: '#ffffffff',
+    position: 'absolute',
+  },
+  targetLine: {
+    height: 8, 
+    backgroundColor: '#00d460ff', 
+    width: '25%', 
+    marginLeft:100, 
+  },
+  controls: {
     flexDirection: 'row',
     marginTop: 20,
   },
