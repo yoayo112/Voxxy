@@ -8,8 +8,13 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 export const pitchBoxHeight = height - (height/3)
+export const heightRange = pitchBoxHeight - 7;
 export const pitchBoxWidth = width - 20;
 
+const headColor = '#fa54ecff';
+const tailColor = '#ffffff';
+const targetColor = '#00d460ff';
+const gridColor = '#494949ff';
 
 // We export the styles so they can be imported and used in other files.
 const styles = StyleSheet.create({
@@ -19,35 +24,48 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderColor: "#84d3ebff",
     borderWidth: 1,
-    marginTop: 10,
+    marginTop: 0,
     flexDirection:'column',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor : 'black',
   },
+  pitchGrid: {
+    height: 1, 
+    backgroundColor: gridColor, 
+    width: '100%', 
+    position: 'absolute'
+  },
   pitchSquare: {
-    width: 10,
-    height: 10,
+    width: 7,
+    height: 7,
     marginLeft: 0,
-    backgroundColor: '#fa54ecff',
+    backgroundColor: headColor,
     position: 'absolute',
   },
   pitchTail: {
-    width: 10,
-    height: 10,
+    width: 5,
+    height: 5,
     marginLeft: 0,
-    backgroundColor: '#ffffffff',
+    backgroundColor: tailColor,
     position: 'absolute',
   },
   targetLine: {
-    height: 8, 
-    backgroundColor: '#00d460ff', 
-    width: '25%', 
-    marginLeft:100, 
+    height: 5, 
+    backgroundColor: targetColor, 
+    width: '50%', 
+    marginLeft:150, 
+    position: 'absolute'
+  },
+  targetText: {
+    marginLeft:150, 
+    color: targetColor,
+    position: 'absolute'
+    
   },
   controls: {
     flexDirection: 'row',
-    marginTop: 20,
+    marginTop: 5,
   },
   pitchmatchContainer: {
     flex: 1,
@@ -75,6 +93,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 30,
+    marginLeft:10,
     fontWeight: '600',
     color: '#fdfdfdff',
     marginBottom: 8,
@@ -100,6 +119,7 @@ const styles = StyleSheet.create({
   backButton: {
     justifyContent:'flex-start',
     marginTop: 45,
+    marginLeft: 10,
     padding: 10,
     backgroundColor: '#53f396ff',
     borderRadius: 8,

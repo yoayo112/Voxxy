@@ -12,8 +12,8 @@ import {
   TouchableOpacity,
  } from 'react-native';
  import { PitchDetector } from 'react-native-pitch-detector';
- import styles, { pitchBoxHeight, pitchBoxWidth } from './styles';
- import { fqzToPosition } from './API';
+ import styles, { pitchBoxHeight, pitchBoxWidth, heightRange } from './styles';
+ import { fqzToPosition, pitchFrequencies } from './API';
 
  interface PitchMatchScreenProps {
   onBack: () => void;
@@ -26,8 +26,15 @@ const PitchMatchScreen: React.FC<PitchMatchScreenProps> = ({ onBack }) => {
     const [position, setPosition] = useState(250);
     const [hz, setHz] = useState(0);
     const [note, setNote] = useState("C");
-    const [pitchLine, setPitchLine] = useState<number[]>([0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
+    const [pitchLine, setPitchLine] = useState<number[]>([]);
+    const [targetLine, setTargetLine] = useState(440);
+    const [targetText, setTargetText] = useState('A4');
 
+    function setTarget(note: string)
+    {
+      setTargetText(note);
+      setTargetLine(pitchFrequencies[note]);
+    }
 
    useEffect(() => {
     let subscription: any; 
@@ -36,14 +43,14 @@ const PitchMatchScreen: React.FC<PitchMatchScreenProps> = ({ onBack }) => {
       PitchDetector.start();
       subscription = PitchDetector.addListener((value: { frequency: number, tone: string}) => {
         setPitchLine(prev => {
-          const updated = [(pitchBoxHeight-15) - fqzToPosition(value.frequency), ...prev];
+          const updated = [(heightRange) - fqzToPosition(value.frequency) - 2, ...prev]; // - 2 is half of the tail block height, so the pitch goes through the center
             const MAX_LENGTH = 500;
             return updated.slice(0, MAX_LENGTH);
           });
 
         setHz(value.frequency);
         setNote(value.tone);
-        let position = (pitchBoxHeight-15) - fqzToPosition(value.frequency);
+        let position = (heightRange) - fqzToPosition(value.frequency) - 3; // - 3 is half of the pitch block height so the pitch goes through the center
         setPosition(position);
 
       });
@@ -62,30 +69,27 @@ const PitchMatchScreen: React.FC<PitchMatchScreenProps> = ({ onBack }) => {
       }
     };
   }, []); 
-    
-    const moveSquareUp = () => {
-    // You'll need to define how much to move the square.
-    // For example, move it up by 10 pixels.
-    if (position > 0) { // Add boundary check to prevent it from moving off-screen
-        setPosition(position - 10);
-    }
-  };
-
-  const moveSquareDown = () => {
-    // Move it down by 10 pixels.
-    if (position < 490) { // Add boundary check
-       setPosition(position + 10);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.pitchmatchContainer}>
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
           <Text style={styles.backButtonText}>Go Back</Text> 
         </TouchableOpacity>
-        <Text style={styles.titleText}>Pitch Match</Text> 
+        <View style={{flexDirection:'row', marginBottom: 0}}>
+          <Text style={[styles.titleText, {marginBottom: 2}]}>Pitch Match</Text> 
+          <TouchableOpacity style={[styles.button, {width:'40%', height:'80%', margin:2, marginLeft:20, paddingVertical:5}]} onPress={() => setTarget('C4')}>
+            <Text style={styles.backButtonText}>Set Target</Text> 
+          </TouchableOpacity>
+        </View>
+        
         <View style={styles.pitchBox}>
-          <View style={[styles.targetLine, {top: (pitchBoxHeight-15) - fqzToPosition(440)}]}/>
+          {
+            Object.entries(pitchFrequencies).map(([pitch,fqz],index) => (
+              <View key={pitch} style={[styles.pitchGrid, {top:heightRange - fqzToPosition(fqz)}]}></View>
+            ))
+          }
+          <Text style={[styles.targetText, {top: (heightRange - 18) - fqzToPosition(targetLine)}]}>{targetText}</Text>
+          <View style={[styles.targetLine, {top: (heightRange - 2) - fqzToPosition(targetLine)}]}/>
           <View style={[styles.pitchSquare, {top: position}]} />
           {
             pitchLine.map((item, index) => (
