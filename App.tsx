@@ -56,6 +56,7 @@ const App = () => {
   
   //so heres a hook
     const [currentScreen, setCurrentScreen] = useState('main');
+    const [profileScreen, setProfileScreen] = useState(false);
 
   // This function will be called when the "Pitch Match" button is pressed.
   const handlePitchMatchPress = () => {
@@ -77,6 +78,17 @@ const App = () => {
     setCurrentScreen('main');
   };
 
+  //function for clicking "profile"
+  const handleProfile = () =>{
+    //if we are calling this from "go back"
+    if(profileScreen == true){
+      setProfileScreen(false);
+    }else{
+      setProfileScreen(true);
+    }
+
+  };
+
   // We use a conditional return to render the correct screen.
   switch(currentScreen){
     case 'pitchMatch':
@@ -86,6 +98,9 @@ const App = () => {
     case 'sequence':
       return <SequenceScreen onBack={handleGoBack} />;
   }
+  //TODO: add button for profile (visible if profile is not)
+  //TODO: add "back" from profivle (visible WITH profile)
+  // both simply toggle whether profile page is visible. 
 
   return (
     <SafeAreaView style={styles.mainContainer}>
