@@ -128,12 +128,24 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
   },
+  settingsButton: {
+    justifyContent:'flex-end',
+    marginTop: 45,
+    marginLeft: pitchBoxWidth - 50,
+    padding: 10,
+    width:'10%',
+    height:'30%',
+    borderRadius: 8,
+  },
   profileContainer: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    backgroundColor: '#828f8d60',
+    backgroundColor: '#222924d0',
+    position:'absolute',
+    height:height,
+    width:width
   },
 });
 

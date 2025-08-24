@@ -7,6 +7,7 @@
 import React , {useState, useEffect} from 'react';
 import { 
   Button, 
+  Image,
   SafeAreaView, 
   Text, 
   View,
@@ -15,10 +16,11 @@ import {
   PermissionsAndroid,
  } from 'react-native';
 
-import styles from './VOX//styles';
+import styles, { pitchBoxWidth } from './VOX//styles';
 import PitchMatchScreen from './VOX//pitchmatch';
 import IntervalScreen from './VOX//intervals';
 import SequenceScreen from './VOX//sequences';
+import ProfileScreen from './VOX/profile';
 
 //Everything happens in here?
 const App = () => {
@@ -86,7 +88,6 @@ const App = () => {
     }else{
       setProfileScreen(true);
     }
-
   };
 
   // We use a conditional return to render the correct screen.
@@ -104,6 +105,13 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
+      <View>
+        {!profileScreen && 
+          <TouchableOpacity onPress={handleProfile}>
+            <Image source={require('./static/gear.png')} style={styles.settingsButton}/>
+          </TouchableOpacity>
+        }
+      </View>
       <View style={styles.mainContent}>
         <Text style={styles.titleText}>Voxxy</Text>
         
@@ -118,6 +126,12 @@ const App = () => {
           <Text style={styles.buttonText}>Sequences</Text>
         </TouchableOpacity>
       </View>
+      {profileScreen && <ProfileScreen onBack={handleProfile}/>}
+      {profileScreen && 
+          <TouchableOpacity style={[styles.backButton, {position:'absolute', bottom:80, left:(pitchBoxWidth/2)-30}]} onPress={handleProfile}>
+            <Text >Done</Text>
+          </TouchableOpacity>
+        }
     </SafeAreaView>
   );
 };

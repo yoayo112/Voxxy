@@ -19,11 +19,10 @@ import {
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({onBack}) => {
       return (
-    <SafeAreaView style={styles.profileContainer}>
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <Text style={styles.backButtonText}>Go Back</Text> 
-        </TouchableOpacity>
-    </SafeAreaView>
+    <View style={styles.profileContainer}>
+
+      <Text style={[styles.titleText,{marginTop:40}]}>Profile</Text>
+    </View>
       );
 };
 
