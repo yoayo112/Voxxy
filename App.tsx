@@ -16,7 +16,7 @@ import {
   PermissionsAndroid,
  } from 'react-native';
 
-import styles, { pitchBoxWidth } from './VOX//styles';
+import styles, { pitchBoxWidth } from './VOX/UI/styles';
 import PitchMatchScreen from './VOX//pitchmatch';
 import IntervalScreen from './VOX//intervals';
 import SequenceScreen from './VOX//sequences';

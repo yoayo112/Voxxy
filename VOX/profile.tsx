@@ -11,16 +11,17 @@ import {
   View,
   TouchableOpacity,
  } from 'react-native';
- import styles from './styles';
+ import styles from './UI/styles';
+ import BackButton from './UI/backButton';
 
- interface ProfileScreenProps {
+  interface props {
   onBack: () => void;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({onBack}) => {
+const ProfileScreen: React.FC<props> = ({onBack}) => {
       return (
     <View style={styles.profileContainer}>
-
+      <BackButton onBack={onBack}/>
       <Text style={[styles.titleText,{marginTop:40}]}>Profile</Text>
     </View>
       );

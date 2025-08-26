@@ -4,7 +4,7 @@
 */
 
 import React , {useState, useEffect} from 'react';
-import { pitchBoxHeight, heightRange } from './styles';
+import { pitchBoxHeight, heightRange } from './UI/styles';
 
 // used to translate frequency to position. 
 //The box is 500px tall.

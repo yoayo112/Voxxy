@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
  } from 'react-native';
  import { PitchDetector } from 'react-native-pitch-detector';
- import styles, { pitchBoxHeight, pitchBoxWidth, heightRange } from './styles';
+ import styles, { pitchBoxHeight, pitchBoxWidth, heightRange } from './UI/styles';
  import { fqzToPosition, pitchFrequencies } from './API';
 
  interface PitchMatchScreenProps {

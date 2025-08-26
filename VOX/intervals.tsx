@@ -12,7 +12,8 @@ import {
   View,
   TouchableOpacity
  } from 'react-native';
- import styles from './styles';
+ import styles from './UI/styles';
+ import BackButton from './UI/backButton';
 
  interface IntervalScreenProps {
   onBack: () => void;
@@ -28,9 +29,7 @@ const IntervalScreen: React.FC<IntervalScreenProps> = ({ onBack }) => {
 
   return (
     <SafeAreaView style={styles.intervalContainer}>
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <Text style={styles.backButtonText}>Go Back</Text>
-        </TouchableOpacity>
+        <BackButton onBack={onBack}/>
         <Text style={styles.titleText}>Pitch Match Game</Text>
         <Text style={{color: '#c8dcdfff', fontSize: 16}}>
           Welcome to the interval game! {"\n"}
