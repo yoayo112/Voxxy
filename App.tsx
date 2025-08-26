@@ -15,7 +15,6 @@ import {
   Platform,
   PermissionsAndroid,
  } from 'react-native';
- import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import styles, { pitchBoxWidth } from './VOX/UI/styles';
 import PitchMatchScreen from './VOX//pitchmatch';
@@ -89,6 +88,7 @@ const App = () => {
       setProfileScreen(false);
     }else{
       setProfileScreen(true);
+      RetreiveProfile();  
     }
   };
 
@@ -107,13 +107,11 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <View>
-        {!profileScreen && 
-          <TouchableOpacity onPress={handleProfile}>
+      {!profileScreen && 
+          <TouchableOpacity onPress={handleProfile} style={{position:'absolute'}}>
             <Image source={require('./static/gear.png')} style={styles.settingsButton}/>
           </TouchableOpacity>
         }
-      </View>
       <View style={styles.mainContent}>
         <Text style={styles.titleText}>Voxxy</Text>
         
@@ -128,12 +126,7 @@ const App = () => {
           <Text style={styles.buttonText}>Sequences</Text>
         </TouchableOpacity>
       </View>
-      {profileScreen && <ProfileScreen />}
-      {profileScreen && 
-          <TouchableOpacity style={[styles.backButton, {position:'absolute', bottom:80, left:(pitchBoxWidth/2)-30}]} onPress={handleProfile}>
-            <Text >Done</Text>
-          </TouchableOpacity>
-        }
+      {profileScreen && <ProfileScreen done={handleProfile}/>}
     </SafeAreaView>
   );
 };

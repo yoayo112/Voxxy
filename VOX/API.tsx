@@ -5,9 +5,16 @@
 
 import React , {useState, useEffect} from 'react';
 import { pitchBoxHeight, heightRange } from './UI/styles';
+import { Profile } from './profile';
 
 export var minFreq: number = 65.40639;   // Deep C (C2)
 export var maxFreq: number = 1046.502;   // C6
+
+export function setRange ()
+{
+  minFreq = pitchFrequencies[Profile.low_range];
+  maxFreq = pitchFrequencies[Profile.high_range];
+}
 
 // used to translate frequency to position. 
 //The box is 500px tall.

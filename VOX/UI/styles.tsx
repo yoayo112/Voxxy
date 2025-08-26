@@ -20,7 +20,7 @@ const textColor = '#fdfdfdff';
 // We export the styles so they can be imported and used in other files.
 const styles = StyleSheet.create({
   dropdown:{
-    width:width/4,
+    width:width/2,
     padding: 10,
     zIndex:1,
   },
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     marginLeft: pitchBoxWidth - 50,
     padding: 10,
     width:'10%',
-    height:'30%',
+    height:'40%',
     borderRadius: 8,
   },
   profileContainer: {

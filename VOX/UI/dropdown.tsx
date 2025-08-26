@@ -3,44 +3,30 @@
  * @author Sky Vercauteren 2025
  */
 
-import React, {useState} from 'react';
-import {
-    Text,  
-    TouchableOpacity,
- } from 'react-native';
+import React, {Dispatch, SetStateAction, useState} from 'react';
  import styles from './styles';
- import DropDownPicker from 'react-native-dropdown-picker';
- import { pitchFrequencies } from '../API';
-
-interface ItemType {
-  label: string;
-  value: string;
-}
-const pitchItems: ItemType[] = Object.keys(pitchFrequencies).map(key => ({
-  label: key,
-  value: key,
-}));
+ import DropDownPicker, {ItemType} from 'react-native-dropdown-picker';
 
 interface DropDownProps {
   placeholder: string;
+  items: ItemType<string>[];
+  value: string | null;
+  setValue: Dispatch<SetStateAction<string | null>>;
 }
 
-const Dropdown: React.FC<DropDownProps> = ({placeholder}) => {
+const Dropdown: React.FC<DropDownProps> = ({ placeholder, items, value, setValue }) => {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<string | null>(null);
-  const [items, setItems] = useState<ItemType[]>(pitchItems);
 
   return (
     <DropDownPicker
-      placeholder={placeholder}
-      open={open}
-      value={value}
-      items={items}
-      setOpen={setOpen}
-      setValue={setValue}
-      setItems={setItems}
-      style={styles.dropdown}
-    />
+        placeholder={placeholder}
+        open={open}
+        value={value}
+        items={items}
+        setOpen={setOpen}
+        setValue={setValue}
+        style={styles.dropdown}
+      />
   );
 };
 

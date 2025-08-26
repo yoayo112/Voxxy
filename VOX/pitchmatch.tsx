@@ -14,6 +14,7 @@ import {
  import { PitchDetector } from 'react-native-pitch-detector';
  import styles, { pitchBoxHeight, pitchBoxWidth, heightRange } from './UI/styles';
  import { fqzToPosition, pitchFrequencies } from './API';
+ import { Profile } from './profile';
 
  interface PitchMatchScreenProps {
   onBack: () => void;
@@ -22,7 +23,14 @@ import {
  //pitch match screen
 const PitchMatchScreen: React.FC<PitchMatchScreenProps> = ({ onBack }) => {
 
-    // can I do states here?
+  const allPitches = Object.entries(pitchFrequencies);
+  const startPitch = Profile.low_range;
+  const endPitch = Profile.high_range;
+  const userRange: Record<string, number> = Object.fromEntries(
+    allPitches.slice(allPitches.findIndex(([key]) => key === startPitch), allPitches.findIndex(([key]) => key === endPitch) + 1)
+  );
+
+    // can I do statehooks here?
     const [position, setPosition] = useState(250);
     const [hz, setHz] = useState(0);
     const [note, setNote] = useState("C");
@@ -34,6 +42,13 @@ const PitchMatchScreen: React.FC<PitchMatchScreenProps> = ({ onBack }) => {
     {
       setTargetText(note);
       setTargetLine(pitchFrequencies[note]);
+    }
+
+    function newTarget() {
+      const keys = Object.keys(userRange);
+      const randomIndex = Math.floor(Math.random() * keys.length);
+      const randomKey = keys[randomIndex];
+      setTarget(randomKey);
     }
 
    useEffect(() => {
@@ -77,14 +92,14 @@ const PitchMatchScreen: React.FC<PitchMatchScreenProps> = ({ onBack }) => {
         </TouchableOpacity>
         <View style={{flexDirection:'row', marginBottom: 0}}>
           <Text style={[styles.titleText, {marginBottom: 2}]}>Pitch Match</Text> 
-          <TouchableOpacity style={[styles.button, {width:'40%', height:'80%', margin:2, marginLeft:20, paddingVertical:5}]} onPress={() => setTarget('C4')}>
-            <Text style={styles.backButtonText}>Set Target</Text> 
+          <TouchableOpacity style={[styles.button, {width:'40%', height:'80%', margin:2, marginLeft:20, paddingVertical:5}]} onPress={newTarget}>
+            <Text style={styles.backButtonText}>New Target</Text> 
           </TouchableOpacity>
         </View>
         
         <View style={styles.pitchBox}>
           {
-            Object.entries(pitchFrequencies).map(([pitch,fqz],index) => (
+            Object.entries(userRange).map(([pitch,fqz],index) => (
               <View key={pitch} style={[styles.pitchGrid, {top:heightRange - fqzToPosition(fqz)}]}></View>
             ))
           }
