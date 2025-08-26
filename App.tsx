@@ -15,15 +15,16 @@ import {
   Platform,
   PermissionsAndroid,
  } from 'react-native';
+ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import styles, { pitchBoxWidth } from './VOX/UI/styles';
 import PitchMatchScreen from './VOX//pitchmatch';
 import IntervalScreen from './VOX//intervals';
 import SequenceScreen from './VOX//sequences';
-import ProfileScreen from './VOX/profile';
+import ProfileScreen, { RetreiveProfile } from './VOX/profile';
 
 //Everything happens in here?
-const App = () => {
+const App = () => { 
 
     // Function to request microphone permissions
   const requestPermissions = async () => {
@@ -54,6 +55,7 @@ const App = () => {
   // The empty dependency array [] ensures it only runs once on mount.
   useEffect(() => {
     requestPermissions();
+    RetreiveProfile();
   }, []);
   
   //so heres a hook
@@ -126,7 +128,7 @@ const App = () => {
           <Text style={styles.buttonText}>Sequences</Text>
         </TouchableOpacity>
       </View>
-      {profileScreen && <ProfileScreen onBack={handleProfile}/>}
+      {profileScreen && <ProfileScreen />}
       {profileScreen && 
           <TouchableOpacity style={[styles.backButton, {position:'absolute', bottom:80, left:(pitchBoxWidth/2)-30}]} onPress={handleProfile}>
             <Text >Done</Text>

@@ -15,9 +15,33 @@ const headColor = '#fa54ecff';
 const tailColor = '#ffffff';
 const targetColor = '#00d460ff';
 const gridColor = '#494949ff';
+const textColor = '#fdfdfdff';
 
 // We export the styles so they can be imported and used in other files.
 const styles = StyleSheet.create({
+  dropdown:{
+    width:width/4,
+    padding: 10,
+    zIndex:1,
+  },
+  form: {
+    padding: 20,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: textColor,
+  },
+  input: {
+    height: 40,
+    width: width/2,
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    color: textColor,
+    backgroundColor:'#1515167c'
+  },
   pitchBox: {
     width: pitchBoxWidth,
     height: pitchBoxHeight,
@@ -95,7 +119,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     marginLeft:10,
     fontWeight: '600',
-    color: '#fdfdfdff',
+    color: textColor,
     marginBottom: 8,
   },
   bodyText: {
@@ -114,7 +138,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: textColor,
   },
   backButton: {
     justifyContent:'flex-start',

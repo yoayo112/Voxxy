@@ -6,13 +6,14 @@
 import React , {useState, useEffect} from 'react';
 import { pitchBoxHeight, heightRange } from './UI/styles';
 
+export var minFreq: number = 65.40639;   // Deep C (C2)
+export var maxFreq: number = 1046.502;   // C6
+
 // used to translate frequency to position. 
 //The box is 500px tall.
 //vocal range from c6(1046.502) to c2 (65.40639)
 export function fqzToPosition(freq: number)
 {
-  const minFreq = 65.40639;   // Deep C (C2)
-  const maxFreq = 1046.502;   // C6
   const scaleMax = heightRange;
 
   // Clamp input to valid range
