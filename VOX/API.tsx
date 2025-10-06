@@ -14,6 +14,7 @@ export function setRange ()
 {
   minFreq = pitchFrequencies[Profile.low_range];
   maxFreq = pitchFrequencies[Profile.high_range];
+
 }
 
 // used to translate frequency to position. 
@@ -29,6 +30,8 @@ export function fqzToPosition(freq: number)
   // Normalize and scale
   const normalized = (clampedFreq - minFreq) / (maxFreq - minFreq);
   const mappedValue = Math.round(normalized * scaleMax);
+
+  //TODO -- Make linear. 
 
   return mappedValue;
 }

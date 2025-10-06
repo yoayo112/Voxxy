@@ -4,6 +4,9 @@
  * August 2025
 **/
 
+// TODO: PLay pitch!!!
+// TODO: Different GUI (like a bubble in a level)
+
 import React , {useState, useEffect} from 'react';
 import { 
   SafeAreaView, 
