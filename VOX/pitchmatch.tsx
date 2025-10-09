@@ -51,9 +51,9 @@ const PitchMatchScreen: React.FC<PitchMatchScreenProps> = ({ onBack }) => {
    useEffect(() => {
     // Define an async function inside useEffect
         const loadProfile = async () => {
-            const profileInstance = new Profile();
-            await profileInstance.RetreiveProfile(); // Now we wait for retrieval
-            setUserProfile(profileInstance); // Update state with loaded data
+            const user = new Profile();
+            await user.RetreiveProfile(); // Now we wait for retrieval
+            setUserProfile(user); // Update state with loaded data
         };
         loadProfile();
       }, []);

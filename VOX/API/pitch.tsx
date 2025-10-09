@@ -7,8 +7,8 @@ import { heightRange } from '../UI/styles';
 import { Profile } from '../profile';
 
 export class Pitch {
-    public note: string;
-    public frequency: number;
+    public note!: string;
+    public frequency!: number;
 
     constructor(note: string, frequency: number) {
         this.note = note;
@@ -171,14 +171,28 @@ export class Pitches {
 
   // Prevent instantiation for this utility class (optional but recommended)
   private constructor() {}
+
+  public static noteToPitch(name: string)
+  {
+    let pitch = Pitches.C4;
+    console.log(name);
+    for(let i =0; i< Pitches.allPitches.length; i++)
+    {
+      if(Pitches.allPitches[i].note == name){
+        console.log(name + " == " + Pitches.allPitches[i].note)
+        pitch =  Pitches.allPitches[i];
+      }
+    }
+    return pitch;
+  }
   
 
   private static minFreq: number = 65.40639;   // Deep C (C2)
   private static maxFreq: number = 1046.502;   // C6
 
-  public static setRange(){
+  public static async setRange(){
     let user = new Profile();
-    user.RetreiveProfile();
+    await user.RetreiveProfile();
 
     this.minFreq = user.low_range.frequency;
     this.maxFreq = user.high_range.frequency;
@@ -188,6 +202,8 @@ export class Pitches {
   //The box is 500px tall.
   //vocal range from c6(1046.502) to c2 (65.40639)
   public static fqzToPosition(freq: number){
+    this.setRange();
+
     const scaleMax = heightRange;
 
     // Clamp input to valid range
