@@ -30,7 +30,7 @@ const IntervalScreen: React.FC<IntervalScreenProps> = ({ onBack }) => {
   return (
     <SafeAreaView style={styles.intervalContainer}>
         <BackButton onBack={onBack}/>
-        <Text style={styles.titleText}>Pitch Match Game</Text>
+        <Text style={styles.titleText}>Intervals Game</Text>
         <Text style={{color: '#c8dcdfff', fontSize: 16}}>
           Welcome to the interval game! {"\n"}
           {count}

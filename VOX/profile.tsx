@@ -12,8 +12,9 @@ import {
   TouchableOpacity,
   TextInput
  } from 'react-native';
+ import SetRangeScreen from './setrange';
  import styles, {pitchBoxWidth} from './UI/styles';
- import { pitchFrequencies, setRange } from './API';
+ import { pitchFrequencies, setRange } from './pitchAPI';
  import Dropdown from './UI/dropdown';
  import {ItemType} from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -59,6 +60,16 @@ const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
   const [name, setName] = useState<string>(Profile["name"]);
   const [low_range, setLow_range] = useState<string | null>(Profile["low_range"]);
   const [high_range, setHigh_range] = useState<string | null>(Profile["high_range"]);
+  const [rangeGame, setRangeGame] = useState<boolean>(false);
+
+  const handleSetRangeGame = () => {
+    if(rangeGame == true)
+    {
+      setRangeGame(false);
+    }else{
+      setRangeGame(true);
+    }
+  }
 
   const setProfile = () => {
     Profile["name"] = name;
@@ -73,6 +84,8 @@ const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
     done();
   }
 
+
+
   let hr_fq = high_range != null ? high_range : "C6";
   const lowRangeItems = Object.keys(pitchFrequencies)
     .filter(pitch => pitchFrequencies[pitch] < pitchFrequencies[hr_fq])
@@ -85,35 +98,44 @@ const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
 
   return (
     <View style={styles.profileContainer}>
-      <Text style={[styles.titleText,{marginTop:40}]}>Profile</Text>
-     <View style={styles.form}>
-      <Text style={styles.label}>Enter your name:</Text>
-      <TextInput
-        style={[styles.input,{marginBottom:10}]}
-        onChangeText={newText => setName(newText)}
-        value={name}
-        placeholder={name}
-      />
-      <Text style={styles.label}>Vocal Range: Lowest Note</Text>
-      <Dropdown 
-          placeholder={low_range || "Select Low Note"} 
-          items={lowRangeItems}
-          value={low_range}
-          setValue={setLow_range}
-        />
-        <Text style={styles.label}>Vocal Range: Highest Note</Text>
-        <Dropdown 
-          placeholder={high_range || "Select High Note"} 
-          items={highRangeItems}
-          value={high_range}
-          setValue={setHigh_range}
-        />
-      </View>
-      <TouchableOpacity style={[styles.backButton, {position:'absolute', bottom:80, left:(pitchBoxWidth/2)-30}]} onPress={handleDone}>
-          <Text >Done</Text>
-      </TouchableOpacity>
+      {rangeGame && <SetRangeScreen onBack={handleSetRangeGame} /> }
+      {!rangeGame &&
+        <View style={styles.profileContainer}>
+          <Text style={[styles.titleText,{marginTop:40}]}>Profile</Text>
+          <View style={styles.form}>
+          <Text style={styles.label}>Enter your name:</Text>
+          <TextInput
+            style={[styles.input,{marginBottom:10}]}
+            onChangeText={newText => setName(newText)}
+            value={name}
+            placeholder={name}
+          />
+          <Text style={styles.label}>Vocal Range: Lowest Note</Text>
+          <Dropdown 
+            placeholder={low_range || "Select Low Note"} 
+            items={lowRangeItems}
+            value={low_range}
+            setValue={setLow_range}
+          />
+          <Text style={styles.label}>Vocal Range: Highest Note</Text>
+          <Dropdown 
+            placeholder={high_range || "Select High Note"} 
+            items={highRangeItems}
+            value={high_range}
+            setValue={setHigh_range}
+          />
+          </View>
+          <TouchableOpacity style={[styles.button, {backgroundColor:"#09c9b9ff", left:10}]} onPress={handleSetRangeGame}>
+            <Text >Determine Your Range</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.backButton, {position:'absolute', bottom:80, left:(pitchBoxWidth/2)-30}]} onPress={handleDone}>
+            <Text >Done</Text>
+          </TouchableOpacity>
+        </View>
+      }
+      
     </View>
-      );
+  );
 };
 
 export default ProfileScreen;

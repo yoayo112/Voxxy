@@ -16,7 +16,7 @@ import {
  } from 'react-native';
  import { PitchDetector } from 'react-native-pitch-detector';
  import styles, { pitchBoxHeight, pitchBoxWidth, heightRange } from './UI/styles';
- import { fqzToPosition, pitchFrequencies } from './API';
+ import { fqzToPosition, pitchFrequencies } from './pitchAPI';
  import { Profile } from './profile';
 
  interface PitchMatchScreenProps {
