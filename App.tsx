@@ -21,10 +21,13 @@ import PitchMatchScreen from './VOX//pitchmatch';
 import IntervalScreen from './VOX//intervals';
 import SequenceScreen from './VOX//sequences';
 import SetRangeScreen from './VOX/setrange';
-import ProfileScreen, { RetreiveProfile } from './VOX/profile';
+import ProfileScreen, {Profile} from './VOX/profile';
 
 //Everything happens in here?
 const App = () => { 
+
+  var user = new Profile();
+  user.RetreiveProfile();
 
     // Function to request microphone permissions
   const requestPermissions = async () => {
@@ -54,7 +57,7 @@ const App = () => {
   // The empty dependency array [] ensures it only runs once on mount.
   useEffect(() => {
     requestPermissions();
-    RetreiveProfile();
+    user.RetreiveProfile();
   }, []);
   
   //so heres a hook
@@ -92,7 +95,7 @@ const App = () => {
       setProfileScreen(false);
     }else{
       setProfileScreen(true);
-      RetreiveProfile();  
+      user.RetreiveProfile();  
     }
   };
 

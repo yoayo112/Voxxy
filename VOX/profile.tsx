@@ -14,7 +14,7 @@ import {
  } from 'react-native';
  import SetRangeScreen from './setrange';
  import styles, {pitchBoxWidth} from './UI/styles';
- import { pitchFrequencies, setRange } from './pitchAPI';
+ import { Pitch, Pitches } from './API/pitch';
  import Dropdown from './UI/dropdown';
  import {ItemType} from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,46 +23,68 @@ interface ProfileProps{
   done: () => void;
 }
 
-export var Profile: Record<string, string> = {
-  "name" : "",
-  "low_range": "",
-  "high_range": ""
-}
+export class Profile {
+  public name!: string;
+  public low_range!: Pitch;
+  public high_range!: Pitch;
 
-export const RetreiveProfile = async () => {
-  console.log("retrieving data");
-    try {
-      const jsonValue = await AsyncStorage.getItem('user_profile');
-      console.log(jsonValue);
-      if(jsonValue != null)
-        {
-          Profile["name"] = JSON.parse(jsonValue).name;
-          Profile["low_range"] = JSON.parse(jsonValue).low_range;
-          Profile["high_range"] = JSON.parse(jsonValue).high_range;
-          setRange();
+  constructor(){
+    this.name = "username";
+    this.low_range = new Pitch("C2", 65.41);
+    this.high_range = new Pitch("C6", 1046.50);
+  }
+
+  public RetreiveProfile = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem('user_profile');
+        if(jsonValue != null) {
+          const parsedData = JSON.parse(jsonValue);
+          this.name = parsedData.name;
+
+          this.low_range = new Pitch(parsedData.low_range.note, parsedData.low_range.frequency); 
+          this.high_range = new Pitch(parsedData.high_range.note, parsedData.high_range.frequency);
+      
+          Pitches.setRange();
         }
-    } catch (e) {
-      console.error('Error loading user data:', e);
-    }
-  };
+      } catch (e) {
+        console.error('Error loading user data:', e);
+      }
+    };
 
-export const SaveProfile = async () => {
+  public SaveProfile = async () => {
     try {
-    const jsonValue = JSON.stringify(Profile);
-    await AsyncStorage.setItem('user_profile', jsonValue);
-    console.log('User data saved successfully.');
-  } catch (e) {
-    console.error('Error saving user data:', e);
+      const jsonValue = JSON.stringify(this); 
+      await AsyncStorage.setItem('user_profile', jsonValue);
+      console.log('User data saved successfully.');
+    } catch (e) {
+      console.error('Error saving user data:', e);
+    }
   }
 }
 
 const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
-  const [name, setName] = useState<string>(Profile["name"]);
-  const [low_range, setLow_range] = useState<string | null>(Profile["low_range"]);
-  const [high_range, setHigh_range] = useState<string | null>(Profile["high_range"]);
+  const [user, setUser] = useState(new Profile());
+  const [name, setName] = useState<string>(user.name);
+  const [low_range, setLow_range] = useState<string | null>(user.low_range.note);
+  const [high_range, setHigh_range] = useState<string | null>(user.high_range.note);
   const [rangeGame, setRangeGame] = useState<boolean>(false);
 
+   useEffect(() => {
+        const loadProfile = async () => {
+            const user = new Profile();
+            await user.RetreiveProfile(); 
+            setUser(user);
+            
+            setName(user.name);
+            setLow_range(user.low_range.note);
+            setHigh_range(user.high_range.note);
+        };
+        loadProfile();
+        
+    }, []);
+
   const handleSetRangeGame = () => {
+    console.log("Profile Data Loaded. Low Range Note:", user.low_range.note);
     if(rangeGame == true)
     {
       setRangeGame(false);
@@ -72,11 +94,9 @@ const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
   }
 
   const setProfile = () => {
-    Profile["name"] = name;
-    Profile["low_range"] = low_range != null ? low_range : 'C2';
-    Profile["high_range"] = high_range != null ? high_range : "C6";
-    SaveProfile();
-    setRange();
+    user.name = name;
+    user.SaveProfile();
+    Pitches.setRange();
   }
 
   const handleDone = () => {
@@ -85,16 +105,19 @@ const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
   }
 
 
+const lowRangeItems = React.useMemo(() => {
+    const items =  Pitches.allPitches
+        .filter(pitch => pitch.frequency <= user.high_range.frequency)
+        .map(pitch => ({ label: pitch.note, value: pitch.note })); // Added value for Dropdown
+    
+    return items;
+}, [user]);
 
-  let hr_fq = high_range != null ? high_range : "C6";
-  const lowRangeItems = Object.keys(pitchFrequencies)
-    .filter(pitch => pitchFrequencies[pitch] < pitchFrequencies[hr_fq])
-    .map(key => ({ label: key, value: key }));
-
-  let lr_fq = low_range != null ? low_range : 'C2';
-  const highRangeItems = Object.keys(pitchFrequencies)
-    .filter(pitch => pitchFrequencies[pitch] > pitchFrequencies[lr_fq])
-    .map(key => ({ label: key, value: key }));
+const highRangeItems = React.useMemo(() => {
+    return Pitches.allPitches
+        .filter(pitch => pitch.frequency >= user.low_range.frequency)
+        .map(pitch => ({ label: pitch.note, value: pitch.note })); // Added value for Dropdown
+}, [user]);
 
   return (
     <View style={styles.profileContainer}>

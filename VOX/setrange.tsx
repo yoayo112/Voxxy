@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
  } from 'react-native';
  import { PitchDetector } from 'react-native-pitch-detector';
- import { fqzToPosition, pitchFrequencies } from './pitchAPI';
+ import { Pitches } from './API/pitch';
  import { Profile } from './profile';
   import styles from './UI/styles';
  import BackButton from './UI/backButton';
@@ -24,10 +24,10 @@ import {
 
  //pitch match screen
 const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
-
-  const startPitch = pitchFrequencies.C4;
-  const lowPitch = pitchFrequencies.C4;
-  const highPitch = pitchFrequencies.C4;
+  
+  const startPitch = Pitches.C4;
+  const lowPitch = Pitches.C4;
+  const highPitch = Pitches.C4;
 
     const [position, setPosition] = useState(250);
     const [hz, setHz] = useState(0);

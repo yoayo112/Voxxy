@@ -16,7 +16,7 @@ import {
  } from 'react-native';
  import { PitchDetector } from 'react-native-pitch-detector';
  import styles, { pitchBoxHeight, pitchBoxWidth, heightRange } from './UI/styles';
- import { fqzToPosition, pitchFrequencies } from './pitchAPI';
+ import { Pitch, Pitches } from './API/pitch';
  import { Profile } from './profile';
 
  interface PitchMatchScreenProps {
@@ -26,14 +26,8 @@ import {
  //pitch match screen
 const PitchMatchScreen: React.FC<PitchMatchScreenProps> = ({ onBack }) => {
 
-  const allPitches = Object.entries(pitchFrequencies);
-  const startPitch = Profile.low_range;
-  const endPitch = Profile.high_range;
-  const userRange: Record<string, number> = Object.fromEntries(
-    allPitches.slice(allPitches.findIndex(([key]) => key === startPitch), allPitches.findIndex(([key]) => key === endPitch) + 1)
-  );
-
     // can I do statehooks here?
+    const [userProfile, setUserProfile] = useState(new Profile());
     const [position, setPosition] = useState(250);
     const [hz, setHz] = useState(0);
     const [note, setNote] = useState("C");
@@ -41,34 +35,43 @@ const PitchMatchScreen: React.FC<PitchMatchScreenProps> = ({ onBack }) => {
     const [targetLine, setTargetLine] = useState(440);
     const [targetText, setTargetText] = useState('A4');
 
-    function setTarget(note: string)
+    function setTarget(note: Pitch)
     {
-      setTargetText(note);
-      setTargetLine(pitchFrequencies[note]);
+      setTargetText(note.note);
+      setTargetLine(note.frequency);
     }
 
     function newTarget() {
-      const keys = Object.keys(userRange);
+      const keys = userRange;
       const randomIndex = Math.floor(Math.random() * keys.length);
       const randomKey = keys[randomIndex];
       setTarget(randomKey);
     }
 
    useEffect(() => {
-    let subscription: any; 
-  
+    // Define an async function inside useEffect
+        const loadProfile = async () => {
+            const profileInstance = new Profile();
+            await profileInstance.RetreiveProfile(); // Now we wait for retrieval
+            setUserProfile(profileInstance); // Update state with loaded data
+        };
+        loadProfile();
+      }, []);
+
+    useEffect(() => {
+      let subscription: any; 
     try {
       PitchDetector.start();
       subscription = PitchDetector.addListener((value: { frequency: number, tone: string}) => {
         setPitchLine(prev => {
-          const updated = [(heightRange) - fqzToPosition(value.frequency) - 2, ...prev]; // - 2 is half of the tail block height, so the pitch goes through the center
+          const updated = [(heightRange) - Pitches.fqzToPosition(value.frequency) - 2, ...prev]; // - 2 is half of the tail block height, so the pitch goes through the center
             const MAX_LENGTH = 500;
             return updated.slice(0, MAX_LENGTH);
           });
 
         setHz(value.frequency);
         setNote(value.tone);
-        let position = (heightRange) - fqzToPosition(value.frequency) - 3; // - 3 is half of the pitch block height so the pitch goes through the center
+        let position = (heightRange) -Pitches. fqzToPosition(value.frequency) - 3; // - 3 is half of the pitch block height so the pitch goes through the center
         setPosition(position);
 
       });
@@ -88,6 +91,17 @@ const PitchMatchScreen: React.FC<PitchMatchScreenProps> = ({ onBack }) => {
     };
   }, []); 
 
+  const startPitch = userProfile.low_range;
+  const endPitch = userProfile.high_range;
+  const userRange: Pitch[] = React.useMemo(() => {
+        if (!startPitch || !endPitch) return []; 
+        
+        return Pitches.allPitches.slice(
+            Pitches.allPitches.findIndex(p => p.note === startPitch.note),
+            Pitches.allPitches.findIndex(p => p.note === endPitch.note) + 1
+        );
+    }, [startPitch, endPitch]);
+
   return (
     <SafeAreaView style={styles.pitchmatchContainer}>
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
@@ -102,12 +116,12 @@ const PitchMatchScreen: React.FC<PitchMatchScreenProps> = ({ onBack }) => {
         
         <View style={styles.pitchBox}>
           {
-            Object.entries(userRange).map(([pitch,fqz],index) => (
-              <View key={pitch} style={[styles.pitchGrid, {top:heightRange - fqzToPosition(fqz)}]}></View>
+            userRange.map((pitchObject,index) => (
+              <View key={pitchObject.note} style={[styles.pitchGrid, {top:heightRange - Pitches.fqzToPosition(pitchObject.frequency)}]}></View>
             ))
           }
-          <Text style={[styles.targetText, {top: (heightRange - 18) - fqzToPosition(targetLine)}]}>{targetText}</Text>
-          <View style={[styles.targetLine, {top: (heightRange - 2) - fqzToPosition(targetLine)}]}/>
+          <Text style={[styles.targetText, {top: (heightRange - 18) - Pitches.fqzToPosition(targetLine)}]}>{targetText}</Text>
+          <View style={[styles.targetLine, {top: (heightRange - 2) - Pitches.fqzToPosition(targetLine)}]}/>
           <View style={[styles.pitchSquare, {top: position}]} />
           {
             pitchLine.map((item, index) => (
