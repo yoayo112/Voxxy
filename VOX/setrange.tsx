@@ -5,6 +5,14 @@
  * August 2025
 **/
 
+//TODO: 
+// - play pitch
+// - show target
+// - if score is good enough for long enough (how to check??) - increment pitch
+// - if score is bad enough for long enough (how to check??) - say "try again!"
+// - if failed twice in a row- -> set pitch as range!! 
+// Some Kind of visual?? 
+
 import React , {useState, useEffect} from 'react';
 import { 
   SafeAreaView, 
@@ -14,6 +22,7 @@ import {
  } from 'react-native';
  import { PitchDetector } from 'react-native-pitch-detector';
  import { Pitches } from './API/pitch';
+ import {Grade} from './API/grade';
  import { Profile } from './profile';
   import styles from './UI/styles';
  import BackButton from './UI/backButton';
@@ -29,10 +38,12 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
   const lowPitch = Pitches.C4;
   const highPitch = Pitches.C4;
 
-    const [position, setPosition] = useState(250);
     const [hz, setHz] = useState(0);
     const [note, setNote] = useState("C4");
-    const [grade, setGrade] = useState(1); // TODO this needs to be scored per "slice" 
+    const [low_max, setLow_max] = useState("C4");
+    const [high_max, setHigh_max] = useState("C4");
+    const [expected, setExpected] = useState(Pitches.C4.frequency);
+    const [grade, setGrade] = useState(1.0); // TODO this needs to be scored per "slice" 
 
 
    useEffect(() => {
@@ -43,11 +54,7 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
       subscription = PitchDetector.addListener((value: { frequency: number, tone: string}) => {
         setHz(value.frequency); // the fqz of what you are singing
         setNote(value.tone);    // the name of the pitch you are singing. 
-        setGrade(expected => {
-            let score = 1;
-            // TODO : use value, frequency, and tone to "grade" the acuracy of the pitch
-            return score;
-          });
+        setGrade(Grade.grade(expected, value.frequency));
 
       });
       console.log("Pitch detection started.");
@@ -67,11 +74,11 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
   }, []); 
 
   return (
-    <SafeAreaView >
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
+    <SafeAreaView style={{top:25}}>
+        <TouchableOpacity style={[styles.backButton, { position:"absolute", right:10}]} onPress={onBack}>
           <Text style={styles.backButtonText}>Go Back</Text> 
         </TouchableOpacity>
-        <View style={{flexDirection:'row', marginBottom: 0}}>
+        <View style={{flexDirection:'row', marginBottom:0}}>
           <Text style={[styles.titleText, {marginBottom: 2}]}>Range Check</Text> 
         </View>
       <View style={styles.controls}>
@@ -82,6 +89,11 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
       <View style={styles.controls}>
         <Text style={styles.titleText}>
           {hz}
+        </Text>
+      </View>
+      <View style={styles.controls}>
+        <Text style={styles.titleText}>
+          Grade: {grade}
         </Text>
       </View>
     </SafeAreaView>
