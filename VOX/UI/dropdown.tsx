@@ -1,21 +1,29 @@
-/**
- * simple dropdown input interface
- * @author Sky Vercauteren 2025
- */
+// dropdown.tsx
 
 import React, {Dispatch, SetStateAction, useState} from 'react';
- import styles from './styles';
- import DropDownPicker, {ItemType} from 'react-native-dropdown-picker';
+import styles from './styles';
+import DropDownPicker, {ItemType} from 'react-native-dropdown-picker';
 
 interface DropDownProps {
   placeholder: string;
   items: ItemType<string>[];
   value: string | null;
-  setValue: Dispatch<SetStateAction<string | null>>;
+  onChangeValue: (value: string | null) => void;
 }
 
-const Dropdown: React.FC<DropDownProps> = ({ placeholder, items, value, setValue }) => {
+const Dropdown: React.FC<DropDownProps> = ({ placeholder, items, value, onChangeValue }) => {
   const [open, setOpen] = useState(false);
+
+  const customSetValue = (callbackOrValue: ((value: string | null) => string | null) | string | null) => {
+    let newValue: string | null;
+
+    if (typeof callbackOrValue === 'function') {
+      newValue = (callbackOrValue as (value: string | null) => string | null)(value);
+    } else {
+      newValue = callbackOrValue;
+    }
+    onChangeValue(newValue);
+  };
 
   return (
     <DropDownPicker
@@ -24,7 +32,7 @@ const Dropdown: React.FC<DropDownProps> = ({ placeholder, items, value, setValue
         value={value}
         items={items}
         setOpen={setOpen}
-        setValue={setValue}
+        setValue={customSetValue as Dispatch<SetStateAction<string | null>>} 
         style={styles.dropdown}
       />
   );

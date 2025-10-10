@@ -20,10 +20,14 @@ import styles, { pitchBoxWidth } from './VOX/UI/styles';
 import PitchMatchScreen from './VOX//pitchmatch';
 import IntervalScreen from './VOX//intervals';
 import SequenceScreen from './VOX//sequences';
-import ProfileScreen, { RetreiveProfile } from './VOX/profile';
+import SetRangeScreen from './VOX/setrange';
+import ProfileScreen, {Profile} from './VOX/profile';
 
 //Everything happens in here?
 const App = () => { 
+
+  var user = new Profile();
+  user.RetreiveProfile();
 
     // Function to request microphone permissions
   const requestPermissions = async () => {
@@ -50,21 +54,24 @@ const App = () => {
     }
   };
 
-  // The useEffect hook runs the code inside it after the component renders.
   // The empty dependency array [] ensures it only runs once on mount.
   useEffect(() => {
     requestPermissions();
-    RetreiveProfile();
+    user.RetreiveProfile();
   }, []);
   
   //so heres a hook
     const [currentScreen, setCurrentScreen] = useState('main');
     const [profileScreen, setProfileScreen] = useState(false);
 
-  // This function will be called when the "Pitch Match" button is pressed.
+  // This will be called when the "Pitch Match" button is pressed.
   const handlePitchMatchPress = () => {
     setCurrentScreen('pitchMatch');
   };
+
+  const handleSetRangePress = () => {
+    setCurrentScreen('setRange');
+  }
 
   //when Interval button is pressed
   const handleIntervalsPress = () => {
@@ -88,12 +95,14 @@ const App = () => {
       setProfileScreen(false);
     }else{
       setProfileScreen(true);
-      RetreiveProfile();  
+      user.RetreiveProfile();  
     }
   };
 
-  // We use a conditional return to render the correct screen.
+  //render different screens with the currentScreen statehook
   switch(currentScreen){
+    case 'setRange':
+      return <SetRangeScreen onBack={handleGoBack} />;
     case 'pitchMatch':
       return <PitchMatchScreen onBack={handleGoBack} />;
     case 'intervals':
@@ -101,9 +110,6 @@ const App = () => {
     case 'sequence':
       return <SequenceScreen onBack={handleGoBack} />;
   }
-  //TODO: add button for profile (visible if profile is not)
-  //TODO: add "back" from profivle (visible WITH profile)
-  // both simply toggle whether profile page is visible. 
 
   return (
     <SafeAreaView style={styles.mainContainer}>
@@ -115,7 +121,10 @@ const App = () => {
       <View style={styles.mainContent}>
         <Text style={styles.titleText}>Voxxy</Text>
         
-        {/* The three buttons handle changing screens*/}
+        {/* The buttons for handle changing screens*/}
+        <TouchableOpacity style={styles.button} onPress={handleSetRangePress}>
+          <Text style={styles.buttonText}>Determine Range</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handlePitchMatchPress}>
           <Text style={styles.buttonText}>Pitch Match</Text>
         </TouchableOpacity>

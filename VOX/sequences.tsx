@@ -31,7 +31,7 @@ const SequenceScreen: React.FC<SequenceScreenProps> = ({ onBack }) => {
     <SafeAreaView style={styles.sequenceContainer}>
       {/*<View style={styles.contentBox}>*/}
         <BackButton onBack={onBack}/>
-        <Text style={styles.titleText}>Pitch Match Game</Text>
+        <Text style={styles.titleText}>Sequences Game</Text>
         <Text style={{color: '#c8dcdfff', fontSize: 16}}>
           Welcome to the interval game! {"\n"}
           {count}
