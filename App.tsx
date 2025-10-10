@@ -1,5 +1,6 @@
 /**
  * Main page for Voxxy app 
+ * Collaborators include Reesie Lane and Sean Thornton :)
  * by @author Sky Vercauteren 
  * August 2025
 **/
