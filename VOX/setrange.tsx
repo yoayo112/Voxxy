@@ -20,16 +20,19 @@ import {
   View,
   TouchableOpacity,
  } from 'react-native';
- import { PitchDetector } from 'react-native-pitch-detector';
- import { Pitches } from './API/pitch';
- import {Grade} from './API/grade';
- import { Profile } from './profile';
-  import styles from './UI/styles';
- import BackButton from './UI/backButton';
+import { PitchDetector } from 'react-native-pitch-detector';
+import { Pitches } from './API/pitch';
+import {Grade} from './API/grade';
+import { Profile } from './profile';
+import styles from './UI/styles';
+import BackButton from './UI/backButton';
+
+const Sound = require('react-native-sound');
 
  interface setRangeScreenProps {
   onBack: () => void;
 }
+
 
  //pitch match screen
 const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
@@ -44,6 +47,11 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
     const [high_max, setHigh_max] = useState("C4");
     const [expected, setExpected] = useState(Pitches.C4.frequency);
     const [grade, setGrade] = useState(1.0); // TODO this needs to be scored per "slice" 
+
+    function startNextTarget(){
+
+      
+    }
 
 
    useEffect(() => {
@@ -96,6 +104,9 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
           Grade: {grade}
         </Text>
       </View>
+      <TouchableOpacity style={[styles.button]} onPress={startNextTarget}>
+          <Text style={styles.buttonText}>Next Target!</Text> 
+        </TouchableOpacity>
     </SafeAreaView>
   );
 };
