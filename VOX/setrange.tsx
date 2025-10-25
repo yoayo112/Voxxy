@@ -59,75 +59,43 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
       setListening(false);
       setAvgGrade(0.0);
 
-      // Get target (increment)
-
-      // Play sound
-      //TODO refactor this into "pitches" so I should be able to "import" pitches and call playback with a single line.
-      if (sound) {
-        sound.play((success) => {
-          console.log("trying to play");
-          if (success) {
-            console.log('successfully finished playing');
-          } else {
-            console.log('playback failed due to audio decoding errors');
-            // Reset the player to the beginning
-            sound.setCurrentTime(0);
-          }
-        });
-      }
+      //play current target
+      Pitches.noteToPitch(note).play();
+      
       //wait for note to finish before listening
       const timerId = setTimeout(() => {
             evaluate();
-        }, 5000);
+        }, 3000);
     }
 
-    const evaluate = useCallback(() => {
-      //start listening
-      setAvgGrade(0.0);
+
+  const evaluate = useCallback(() => {
       setListening(true);
 
-      //wait 5 seconds then stop listening: grade will happen while listening.
       const timerId = setTimeout(() => {
-            setListening(false);
-            //determine retry, increment, or decrement. 
-           //what is the score threshold? -- for now I am saying 70%
-           if(avgGrade >=70)
-           {
-             console.log(avgGrade+ " great job you passed. lets increment the pitch!");
-           }else{
-             console.log(avgGrade+" hmm keep working at it!");
-           }
-           }, 3000);
-    }, [avgGrade]);
+          setListening(false);
 
-    const loadSounds = () => {
-      // TODO: all library sounds. from pitches.
-     const sound = new Sound("c4.mp3", Sound.MAIN_BUNDLE, (error: any) => {
-      if (error) {
-        console.log('failed to load the sound', error);
-        return;
-      }
-      // loaded successfully
-      console.log('duration in seconds: ' + sound.getDuration() + 'number of channels: ' + sound.getNumberOfChannels());
-      sound.setVolume(1.0);
-      // 4. Update state with the loaded Sound object
-      setSound(sound);
-    });
-  };
+          //woah, so apparently there is an internal promise from the setter to force the most current version through the setter, so I can read it from the setter, then reset it lol. 
+          setAvgGrade(latestAvgGrade => {
+              if (latestAvgGrade >= 70) { 
+                  console.log(latestAvgGrade + " great job you passed. lets increment the pitch!");
+              } else {
+                  console.log(latestAvgGrade + " hmm keep working at it!");
+              }
+              // We return the same value because we just wanted to read it, not change it.
+              return latestAvgGrade; 
+          });
+      }, 3000); 
+      
+    return () => clearTimeout(timerId);
+  }, [setListening, setAvgGrade]);
 
-  const releaseSounds = () => {
-    // TODO all library sounds. from pitches.
-    if (sound) {
-        sound.release();
-        setSound(null);
-      }
-  }
 
   //playback effect
   useEffect(() =>{
-    loadSounds();
+    Pitches.loadAll();
     return () => {
-      releaseSounds();
+      Pitches.releaseAll();
     }
   }, []);
 
