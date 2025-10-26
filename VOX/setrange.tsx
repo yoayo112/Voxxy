@@ -64,17 +64,21 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
 
   function nextPitch(){
     //Logic to decide if we are going up or down. 
-    increment()
+    increment();
     //decrement()
   }
 
-  function increment(){
-    setHigh_max(expected.note);
-    setExpected(Pitches.increment(expected));
-  }
+  const increment = useCallback(() => {
+    setExpected(oldExpectedPitch => {
+      setHigh_max(oldExpectedPitch.name);
+
+      const newExpectedPitch = Pitches.increment(oldExpectedPitch);
+      return newExpectedPitch;
+    });
+  }, []);
 
   function decrement(){
-    setLow_max(expected.note);
+    setLow_max(expected.name);
     setExpected(Pitches.decrement(expected));
   }
 
@@ -152,7 +156,7 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
         </View>
       <View style={styles.controls}>
         <Text style={styles.subtitleText}>
-          Expected: {expected.note}
+          Expected: {expected.name}
         </Text>
       </View>
       <View style={styles.controls}>

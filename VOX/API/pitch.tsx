@@ -8,13 +8,13 @@ import { Profile } from '../profile';
 import Sound from 'react-native-sound';
 
 export class Pitch {
-    public note!: string;
+    public name!: string;
     public frequency!: number;
     public file!: string;
     public sound!: Sound;
 
     constructor(note: string, frequency: number, file:string) {
-        this.note = note;
+        this.name = note;
         this.frequency = frequency;
         this.file = file;
         const sound = this.load();
@@ -42,13 +42,13 @@ export class Pitch {
       let max = 5;
       let delay = 1000;
       if (!this.sound) {
-          console.log(`needed to reload ${this.note}`);
+          console.log(`needed to reload ${this.name}`);
           this.sound = this.load();
       }
       
       if (this.sound) {
         this.sound.play((success) => {
-          console.log(`[Attempt ${retryCount + 1}] trying to play ${this.note}`);
+          console.log(`[Attempt ${retryCount + 1}] trying to play ${this.name}`);
           
           if (success) {
             console.log(`-- played successfully --`);
@@ -62,13 +62,13 @@ export class Pitch {
                 this.play(retryCount + 1); 
               }, delay);
             } else {
-              console.error(`Failed to play ${this.note} after ${max + 1} attempts. Giving up.`);
+              console.error(`Failed to play ${this.name} after ${max + 1} attempts. Giving up.`);
             }
           }
         });
       } else {
           // This happens if load() failed and set this.sound = null
-          console.error(`Fatal Error: Cannot play ${this.note}. Sound failed to initialize.`);
+          console.error(`Fatal Error: Cannot play ${this.name}. Sound failed to initialize.`);
       }
     }
 } 
@@ -122,7 +122,7 @@ export class Pitches {
   public static readonly E4 = new Pitch("E4", 329.63, "e4.mp3");
   public static readonly F4 = new Pitch("F4", 349.23,"f4.mp3");
   public static readonly Fs4 = new Pitch("F#4", 369.99, "fs4.mp3");
-  public static readonly Gb4 = new Pitch("Gb4", 369.99, "gs4.mp3");
+  public static readonly Gb4 = new Pitch("Gb4", 369.99, "fs4.mp3");
   public static readonly G4 = new Pitch("G4", 392.00, "g4.mp3");
   public static readonly Gs4 = new Pitch("G#4", 415.30, "gs4.mp3");
   public static readonly Ab4 = new Pitch("Ab4", 415.30, "gs4.mp3");
@@ -241,39 +241,49 @@ export class Pitches {
     });
   }
 
-  public static increment(me: Pitch){
-    let target = Pitches.C4;
-    let natural = (!me.file.includes('s'))? true : false;
+    public static increment(me: Pitch) {
+        let target = Pitches.C4; 
 
-    let length = Pitches.allPitches.length;
-    for(let i =0; i<length;  i++)
-    {
-      let check = Pitches.allPitches[i];
-      if(check.note == me.note){
-        let index = (!natural)? i+2 : i+1;
-        index = (index>=length)? length-1: index;
-        target =  Pitches.allPitches[index];
+        const currentIndex = Pitches.allPitches.findIndex(pitch => pitch.name === me.name);
+
+        if (currentIndex === -1) {
+            return target; 
         }
-    }
-    return target;
-  }
 
-  public static decrement(me: Pitch){
-    let target = Pitches.C4;
-    let natural = (!me.file.includes('s'))? true : false;
+        let nextIndex = currentIndex + 1;
+        const length = Pitches.allPitches.length;
 
-    let length = Pitches.allPitches.length;
-    for(let i =0; i<length;  i++)
-    {
-      let check = Pitches.allPitches[i];
-      if(check.note == me.note){
-        let index = (!natural)? i-2 : i-1;
-        index = (index<=0)? 0: index;
-        target =  Pitches.allPitches[index];
+        // Check legality and if enharmonic equiv.
+        if (nextIndex < length && Pitches.allPitches[nextIndex].file === me.file) {
+            nextIndex++; //skip duplicate
         }
+        nextIndex = Math.min(nextIndex, length - 1);
+        console.log(currentIndex + "  vs "+nextIndex);
+        
+        target = Pitches.allPitches[nextIndex];
+        console.log(target.name);
+        return target;
     }
-    return target;
-  }
+
+    public static decrement(me: Pitch) {
+        let target = Pitches.C4; 
+
+        const currentIndex = Pitches.allPitches.findIndex(pitch => pitch.name === me.name);
+
+        if (currentIndex === -1) {
+            return target; 
+        }
+
+        let prevIndex = currentIndex - 1;
+
+        if (currentIndex > 0 && me.file === Pitches.allPitches[currentIndex - 1].file) {
+            prevIndex--;
+        }
+        prevIndex = Math.max(prevIndex, 0);
+
+        target = Pitches.allPitches[prevIndex];
+        return target;
+    }
 
 
   public static noteToPitch(name: string)
@@ -281,7 +291,7 @@ export class Pitches {
     let pitch = Pitches.C4;
     for(let i =0; i< Pitches.allPitches.length; i++)
     {
-      if(Pitches.allPitches[i].note == name){
+      if(Pitches.allPitches[i].name == name){
         pitch =  Pitches.allPitches[i];
       }
     }
