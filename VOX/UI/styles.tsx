@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-profileContainer: {
+  profileContainer: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
@@ -73,6 +73,14 @@ profileContainer: {
     height:height,
     width:width
   },
+  dividerBox: {
+    flexDirection: 'column',
+    padding:10,
+    margin: 10,
+    borderWidth:1,
+    borderColor:'#b6afafff'
+  },
+
 
 
   //-------------
@@ -145,6 +153,13 @@ profileContainer: {
     color: textColor,
     marginBottom: 8,
   },
+  subtitleText: {
+    fontSize: 20,
+    marginLeft:10,
+    fontWeight: '600',
+    color: textColor,
+    marginBottom: 8,
+  },
   bodyText: {
     fontSize: 16,
     color: '#6B7280',
@@ -155,7 +170,7 @@ profileContainer: {
     color: textColor,
   },
   backButtonText: {
-    color: '#FFFFFF',
+    color: '#000000ff',
     fontSize: 16,
   },
   

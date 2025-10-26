@@ -28,7 +28,6 @@ import styles from './UI/styles';
 import BackButton from './UI/backButton';
 
 import Sound from 'react-native-sound';
-//const Sound = require('react-native-sound');
 
  interface setRangeScreenProps {
   onBack: () => void;
@@ -37,36 +36,47 @@ import Sound from 'react-native-sound';
 
  //pitch match screen
 const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => { 
+
+  const [hz, setHz] = useState(0);
+  const [note, setNote] = useState("C4");
+  const [low_max, setLow_max] = useState("C4");
+  const [high_max, setHigh_max] = useState("C4");
+  const [expected, setExpected] = useState(Pitches.C4);
+  const [grade, setGrade] = useState(1.0);
+  const [message, setMessage] = useState('');
+  const [avgGrade, setAvgGrade] = useState(0.0);
+  const [listening, setListening] = useState(false);
   
-  const startPitch = Pitches.C4;
-  const lowPitch = Pitches.C4;
-  const highPitch = Pitches.C4;
+  Sound.setCategory('Playback');
+  
+  function start(){
+    // Stop listening
+    setListening(false);
+    setAvgGrade(0.0);
+    //play current target
+    expected.play();
+    
+    //wait for note to finish before listening
+    const timerId = setTimeout(() => {
+          evaluate();
+      }, 3000);
+  }
 
-    const [hz, setHz] = useState(0);
-    const [note, setNote] = useState("C4");
-    const [low_max, setLow_max] = useState("C4");
-    const [high_max, setHigh_max] = useState("C4");
-    const [expected, setExpected] = useState(Pitches.C4.frequency);
-    const [grade, setGrade] = useState(1.0);
-    const [avgGrade, setAvgGrade] = useState(0.0);
-    const [listening, setListening] = useState(false);
+  function nextPitch(){
+    //Logic to decide if we are going up or down. 
+    increment()
+    //decrement()
+  }
 
-    Sound.setCategory('Playback');
-    const [sound, setSound] = useState<Sound | null>(null);
+  function increment(){
+    setHigh_max(expected.note);
+    setExpected(Pitches.increment(expected));
+  }
 
-    function startNextTarget(){
-      // Stop listening
-      setListening(false);
-      setAvgGrade(0.0);
-
-      //play current target
-      Pitches.noteToPitch(note).play();
-      
-      //wait for note to finish before listening
-      const timerId = setTimeout(() => {
-            evaluate();
-        }, 3000);
-    }
+  function decrement(){
+    setLow_max(expected.note);
+    setExpected(Pitches.decrement(expected));
+  }
 
 
   const evaluate = useCallback(() => {
@@ -75,18 +85,19 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
       const timerId = setTimeout(() => {
           setListening(false);
 
-          //woah, so apparently there is an internal promise from the setter to force the most current version through the setter, so I can read it from the setter, then reset it lol. 
+          //woah, so apparently there is an internal promise to force the most current version through the setter, so I can read it from the setter, then set it to the same value without changing it. 
           setAvgGrade(latestAvgGrade => {
               if (latestAvgGrade >= 70) { 
-                  console.log(latestAvgGrade + " great job you passed. lets increment the pitch!");
+                  setMessage("Your got "+ latestAvgGrade.toFixed(2) + "! Great job, lets increment the pitch!")
+                  nextPitch();
               } else {
-                  console.log(latestAvgGrade + " hmm keep working at it!");
+                  setMessage("Your grade was "+ latestAvgGrade.toFixed(2) + ", hmmm keep working at it!")
               }
               // We return the same value because we just wanted to read it, not change it.
               return latestAvgGrade; 
           });
       }, 3000); 
-      
+
     return () => clearTimeout(timerId);
   }, [setListening, setAvgGrade]);
 
@@ -109,7 +120,7 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
         subscription = PitchDetector.addListener((value: { frequency: number, tone: string}) => {
           setHz(value.frequency); // the fqz of what you are singing
           setNote(value.tone);    // the name of the pitch you are singing. 
-          let current = Grade.grade(expected, value.frequency)
+          let current = Grade.grade(expected.frequency, value.frequency)
           setAvgGrade((grade + current) / 2);
           setGrade(current);
 
@@ -137,25 +148,51 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
           <Text style={styles.backButtonText}>Go Back</Text> 
         </TouchableOpacity>
         <View style={{flexDirection:'row', marginBottom:0}}>
-          <Text style={[styles.titleText, {marginBottom: 2}]}>Range Check</Text> 
+          <Text style={[styles.titleText, {marginBottom: 2}]}>Range Game</Text> 
         </View>
       <View style={styles.controls}>
-        <Text style={styles.titleText}>
-          Pitch: {note}
+        <Text style={styles.subtitleText}>
+          Expected: {expected.note}
         </Text>
       </View>
       <View style={styles.controls}>
-        <Text style={styles.titleText}>
-          {hz}
-        </Text>
-      </View>
-      <View style={styles.controls}>
-        <Text style={styles.titleText}>
+        <Text style={styles.subtitleText}>
           Grade: {avgGrade}
         </Text>
       </View>
-      <TouchableOpacity style={[styles.button]} onPress={startNextTarget}>
-          <Text style={styles.buttonText}>Next Target!</Text> 
+      <View style={styles.dividerBox}>
+        <Text style={[styles.bodyText, {color:'#d5dbe7ff'}]}>Your Current Pitch:</Text>
+        <View style={styles.controls}>
+          <Text style={styles.subtitleText}>
+            Pitch: {note}
+          </Text>
+        </View>
+        <View style={styles.controls}>
+          <Text style={styles.subtitleText}>
+            Fqz: {hz}
+          </Text>
+        </View>
+      </View>
+      <View style={styles.controls}>
+          <Text style={[styles.bodyText, {color:'#2bc0a0ff', marginLeft:10}]}>
+            {message}
+          </Text>
+      </View>
+      <View style={styles.dividerBox}>
+        <Text style={[styles.bodyText, {color:'#d5dbe7ff'}]}>Your Range:</Text>
+        <View style={styles.controls}>
+          <Text style={styles.subtitleText}>
+            Highest: {high_max}
+          </Text>
+        </View>
+        <View style={styles.controls}>
+          <Text style={styles.subtitleText}>
+            Lowest: {low_max}
+          </Text>
+        </View>
+      </View>
+      <TouchableOpacity style={[styles.button]} onPress={start}>
+          <Text style={styles.buttonText}>Start!</Text> 
         </TouchableOpacity>
     </SafeAreaView>
   );

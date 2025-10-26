@@ -37,21 +37,41 @@ export class Pitch {
       }
     }
 
-    public play() {
-      if(!this.sound) {this.sound = this.load();}
+    // Modified play() method with retry logic
+    public play(retryCount: number = 0) {
+      let max = 5;
+      let delay = 1000;
+      if (!this.sound) {
+          console.log(`needed to reload ${this.note}`);
+          this.sound = this.load();
+      }
+      
       if (this.sound) {
         this.sound.play((success) => {
-          console.log("trying to play");
+          console.log(`[Attempt ${retryCount + 1}] trying to play ${this.note}`);
+          
           if (success) {
-            console.log('played');
+            console.log(`-- played successfully --`);
+            this.sound?.setCurrentTime(0); // Reset for next play
           } else {
-            console.log('couldnt play (probably encoding)');
-            this.sound.setCurrentTime(0);
+            console.warn(`[Attempt ${retryCount + 1}] couldn't play (probably encoding).`);
+            this.sound?.setCurrentTime(0);
+            
+            if (retryCount < max) {
+              setTimeout(() => {
+                this.play(retryCount + 1); 
+              }, delay);
+            } else {
+              console.error(`Failed to play ${this.note} after ${max + 1} attempts. Giving up.`);
+            }
           }
         });
+      } else {
+          // This happens if load() failed and set this.sound = null
+          console.error(`Fatal Error: Cannot play ${this.note}. Sound failed to initialize.`);
       }
     }
-}
+} 
 export class Pitches {
 
   // C2 Octave
@@ -221,14 +241,47 @@ export class Pitches {
     });
   }
 
+  public static increment(me: Pitch){
+    let target = Pitches.C4;
+    let natural = (!me.file.includes('s'))? true : false;
+
+    let length = Pitches.allPitches.length;
+    for(let i =0; i<length;  i++)
+    {
+      let check = Pitches.allPitches[i];
+      if(check.note == me.note){
+        let index = (!natural)? i+2 : i+1;
+        index = (index>=length)? length-1: index;
+        target =  Pitches.allPitches[index];
+        }
+    }
+    return target;
+  }
+
+  public static decrement(me: Pitch){
+    let target = Pitches.C4;
+    let natural = (!me.file.includes('s'))? true : false;
+
+    let length = Pitches.allPitches.length;
+    for(let i =0; i<length;  i++)
+    {
+      let check = Pitches.allPitches[i];
+      if(check.note == me.note){
+        let index = (!natural)? i-2 : i-1;
+        index = (index<=0)? 0: index;
+        target =  Pitches.allPitches[index];
+        }
+    }
+    return target;
+  }
+
+
   public static noteToPitch(name: string)
   {
     let pitch = Pitches.C4;
-    console.log(name);
     for(let i =0; i< Pitches.allPitches.length; i++)
     {
       if(Pitches.allPitches[i].note == name){
-        console.log(name + " == " + Pitches.allPitches[i].note)
         pitch =  Pitches.allPitches[i];
       }
     }
