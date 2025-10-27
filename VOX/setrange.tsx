@@ -43,6 +43,8 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
   const [high_max, setHigh_max] = useState("C4");
   const [expected, setExpected] = useState(Pitches.C4);
   const [grade, setGrade] = useState(1.0);
+  const [failCount, setFailCount] = useState(0);
+  const [increasing, setIncreasing] = useState(true);
   const [message, setMessage] = useState('');
   const [avgGrade, setAvgGrade] = useState(0.0);
   const [listening, setListening] = useState(false);
@@ -62,25 +64,46 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
       }, 3000);
   }
 
-  function nextPitch(){
-    //Logic to decide if we are going up or down. 
-    increment();
-    //decrement()
+  function nextPitch(pivot:boolean){
+    //if they passed going up
+    if(increasing && !pivot){
+      setFailCount(0);
+      increment();
+    }//if they fail going up
+    else if(increasing && pivot){
+      setFailCount(0);
+      setIncreasing(false);
+      setExpected(Pitches.C4);
+    }//if they succeed going down.
+    else if(!increasing && !pivot){
+      setFailCount(0);
+      decrement();
+    }else if(!increasing && pivot){
+      let high = Pitches.noteToPitch(high_max);
+      let low = Pitches.noteToPitch(low_max);
+      setMessage("Congrats, you're a "+Pitches.classify(high, low));
+      //TODO Save range to profile.
+      // end activity. 
+    }
   }
 
   const increment = useCallback(() => {
-    setExpected(oldExpectedPitch => {
-      setHigh_max(oldExpectedPitch.name);
+    setExpected(oldPitch => {
+      setHigh_max(oldPitch.name);
 
-      const newExpectedPitch = Pitches.increment(oldExpectedPitch);
-      return newExpectedPitch;
+      const newPitch = Pitches.increment(oldPitch);
+      return newPitch;
     });
   }, []);
 
-  function decrement(){
-    setLow_max(expected.name);
-    setExpected(Pitches.decrement(expected));
-  }
+  const decrement = useCallback(() => {
+    setExpected(oldPitch => {
+      setLow_max(oldPitch.name);
+
+      const newPitch = Pitches.decrement(oldPitch);
+      return newPitch;
+    });
+  }, []);
 
 
   const evaluate = useCallback(() => {
@@ -93,9 +116,13 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
           setAvgGrade(latestAvgGrade => {
               if (latestAvgGrade >= 70) { 
                   setMessage("Your got "+ latestAvgGrade.toFixed(2) + "! Great job, lets increment the pitch!")
-                  nextPitch();
+                  nextPitch(false);
+              } else if(failCount >=3){
+                setMessage("Ok that must be your highest note, lets go the other way.");
+                nextPitch(true);
               } else {
                   setMessage("Your grade was "+ latestAvgGrade.toFixed(2) + ", hmmm keep working at it!")
+                  setFailCount(failCount+1);
               }
               // We return the same value because we just wanted to read it, not change it.
               return latestAvgGrade; 
@@ -103,7 +130,7 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
       }, 3000); 
 
     return () => clearTimeout(timerId);
-  }, [setListening, setAvgGrade]);
+  }, [setListening, setAvgGrade, failCount]);
 
 
   //playback effect
@@ -114,7 +141,7 @@ const SetRangeScreen: React.FC<setRangeScreenProps> = ({ onBack }) => {
     }
   }, []);
 
-  // pitch detection effect
+  // THis is what you can copy/paste for grading on another game, this whole effect will update current note/hz grade and avgGrade.
    useEffect(() => {
     let subscription: any; 
   
