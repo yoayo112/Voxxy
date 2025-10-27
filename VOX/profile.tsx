@@ -25,11 +25,17 @@ export class Profile {
   public name!: string;
   public low_range!: Pitch;
   public high_range!: Pitch;
+  public range_class!: string;
 
   constructor(){
     this.name = "username";
+    this.range_class = "undecided";
     this.low_range = Pitches.C2;
     this.high_range = Pitches.C6;
+  }
+
+  public setClass(high:Pitch, low:Pitch){
+    
   }
 
   public RetreiveProfile = async () => {
@@ -63,8 +69,8 @@ export class Profile {
 const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
   const [user, setUser] = useState(new Profile());
   const [name, setName] = useState<string>(user.name);
-  const [low_range, setLow_range] = useState<string>(user.low_range.note);
-  const [high_range, setHigh_range] = useState<string>(user.high_range.note);
+  const [low_range, setLow_range] = useState<string>(user.low_range.name);
+  const [high_range, setHigh_range] = useState<string>(user.high_range.name);
   const [rangeGame, setRangeGame] = useState<boolean>(false);
 
    useEffect(() => {
@@ -73,8 +79,8 @@ const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
             await user.RetreiveProfile(); 
             setUser(user);
             setName(user.name);
-            setLow_range(user.low_range.note);
-            setHigh_range(user.high_range.note);
+            setLow_range(user.low_range.name);
+            setHigh_range(user.high_range.name);
         };
         loadProfile();
         
@@ -88,7 +94,7 @@ const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
     }else{
       validPitch = Pitches.noteToPitch(item);
     }
-    setLow_range(validPitch.note);
+    setLow_range(validPitch.name);
     user.low_range = validPitch
     user.SaveProfile();
   }
@@ -101,7 +107,7 @@ const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
     }else{
       validPitch = Pitches.noteToPitch(finalItem);
     }
-    setHigh_range(validPitch.note);
+    setHigh_range(validPitch.name);
     user.high_range = validPitch
     user.SaveProfile();
   }
@@ -132,7 +138,7 @@ const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
 const lowRangeItems = React.useMemo(() => {
     const items =  Pitches.allPitches
         .filter(pitch => pitch.frequency <= user.high_range.frequency)
-        .map(pitch => ({ label: pitch.note, value: pitch.note })); 
+        .map(pitch => ({ label: pitch.name, value: pitch.name })); 
     
     return items;
 }, [user]);
@@ -140,7 +146,7 @@ const lowRangeItems = React.useMemo(() => {
 const highRangeItems = React.useMemo(() => {
     return Pitches.allPitches
         .filter(pitch => pitch.frequency >= user.low_range.frequency)
-        .map(pitch => ({ label: pitch.note, value: pitch.note })); // Added value for Dropdown
+        .map(pitch => ({ label: pitch.name, value: pitch.name })); // Added value for Dropdown
 }, [user]);
 
   return (
