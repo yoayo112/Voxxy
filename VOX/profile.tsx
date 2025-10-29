@@ -35,7 +35,7 @@ export class Profile {
   }
 
   public setClass(high:Pitch, low:Pitch){
-    
+    this.range_class = Pitches.classify(high, low).name;
   }
 
   public RetreiveProfile = async () => {
@@ -45,10 +45,14 @@ export class Profile {
           const parsedData = JSON.parse(jsonValue);
           this.name = parsedData.name;
 
-          this.low_range = (parsedData.low_range.note == undefined) ? Pitches.C2 : parsedData.low_range;
-          this.high_range = (parsedData.high_range.note == undefined) ? Pitches.C2 : parsedData.high_range;
-      
-          Pitches.setRange();
+          const savedLowRangeName = parsedData.low_range?.name;
+          const savedHighRangeName = parsedData.high_range?.name;
+            
+            this.low_range = savedLowRangeName ? Pitches.noteToPitch(savedLowRangeName) 
+              : Pitches.C2;
+                
+            this.high_range = savedHighRangeName ? Pitches.noteToPitch(savedHighRangeName) 
+              : Pitches.C6;
         }
       } catch (e) {
         console.error('Error loading user data:', e);
@@ -136,17 +140,15 @@ const ProfileScreen: React.FC<ProfileProps> = ({done}) => {
 
 
 const lowRangeItems = React.useMemo(() => {
-    const items =  Pitches.allPitches
+    return Pitches.allPitches
         .filter(pitch => pitch.frequency <= user.high_range.frequency)
-        .map(pitch => ({ label: pitch.name, value: pitch.name })); 
-    
-    return items;
+        .map(pitch => ({ label: pitch.name, value: pitch.name }));
 }, [user]);
 
 const highRangeItems = React.useMemo(() => {
     return Pitches.allPitches
         .filter(pitch => pitch.frequency >= user.low_range.frequency)
-        .map(pitch => ({ label: pitch.name, value: pitch.name })); // Added value for Dropdown
+        .map(pitch => ({ label: pitch.name, value: pitch.name })); 
 }, [user]);
 
   return (
