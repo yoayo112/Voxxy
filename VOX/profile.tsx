@@ -48,13 +48,11 @@ export class Profile {
           const savedLowRangeName = parsedData.low_range?.name;
           const savedHighRangeName = parsedData.high_range?.name;
             
-            this.low_range = savedLowRangeName 
-                ? Pitches.noteToPitch(savedLowRangeName) 
-                : Pitches.C2;
+            this.low_range = savedLowRangeName ? Pitches.noteToPitch(savedLowRangeName) 
+              : Pitches.C2;
                 
-            this.high_range = savedHighRangeName 
-                ? Pitches.noteToPitch(savedHighRangeName) 
-                : Pitches.C6;
+            this.high_range = savedHighRangeName ? Pitches.noteToPitch(savedHighRangeName) 
+              : Pitches.C6;
         }
       } catch (e) {
         console.error('Error loading user data:', e);
